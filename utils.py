@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from env_final import Kita
+from env import Kita
 
 def board_to_matrix(env: Kita) -> np.ndarray:
     matrix = np.zeros((10, 4, 7), dtype=np.float32)
@@ -36,7 +36,8 @@ def board_to_matrix(env: Kita) -> np.ndarray:
     return matrix
 
 def move_to_a0(move: str) -> int:
-    print(move)
+    #print(move)
+    #print(move[0])
     start_col = ord(move[0]) - 97
     start_row = int(move[1]) - 1
     end_col = ord(move[2]) - 97

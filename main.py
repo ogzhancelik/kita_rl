@@ -4,7 +4,7 @@ import time
 import utils as f
 from mcts import MCTS # ithinkbettermcts.py can be used here
 from model import ResNet
-from env_final import Kita
+from env import Kita
 import copy
 
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         "dirichlet_epsilon": 0.25,
         "dirichlet_alpha": 0.03,
         "memory_size": 1000,
-        "action_space": 4672,
+        "action_space": 672,
         "device": device,
         "top_actions": 5,
         "t": 1,

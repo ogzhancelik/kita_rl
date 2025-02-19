@@ -2,7 +2,7 @@ import math
 import utils as f
 import numpy as np
 import torch
-from env_final import Kita
+from env import Kita
 from model import ResNet
 import copy
 global max_depth 
