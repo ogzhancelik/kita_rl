@@ -66,11 +66,11 @@ class Kita:
 
         valids = self.get_valid_moves()
 
-        if [(start_row, start_col), (end_row, end_col)] in valids:
+        if move in valids:
             self.board[end_row][end_col] = self.board[start_row][start_col]
             self.board[start_row][start_col] = 0
             self.last_moves[self.turn] = [(end_row, end_col), (start_row, start_col)]
-
+            self.move_counter+=1
             for i in range(3):
                 if (start_row, start_col) == self.pieces[self.turn][i]:
                     self.pieces[self.turn][i] = (end_row, end_col)
@@ -78,7 +78,7 @@ class Kita:
                 else:
                     continue
         else:
-            #print("invalid move")
+            print("invalid move")
             return
         
         self.change_turn()

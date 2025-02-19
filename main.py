@@ -64,7 +64,4 @@ if __name__ == "__main__":
     print(f"Elapsed time: {time.time() - t}")
     print(f"Finished self-play.")
 
- 
-  
-
     
