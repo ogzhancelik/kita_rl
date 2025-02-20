@@ -30,9 +30,9 @@ class Kita:
         return new_moves
 
 
-    def get_valid_moves(self):
+    def get_valid_moves(self, turn):
         valid_moves = []
-        for (row, col) in self.pieces[self.turn]:
+        for (row, col) in self.pieces[turn]:
             directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
             queue = deque([(row, col, 0)])
             visited = set()
@@ -41,7 +41,7 @@ class Kita:
                 r, c, steps = queue.popleft()
                 if steps == self.current_step_size:
                     if self.board[r][c] in [0, -2, 2]:
-                        if self.board[r][c]*self.turn <= 0:
+                        if self.board[r][c]*turn <= 0:
                             valid_moves.append([(row, col), (r, c)])
                     continue
                 for dr, dc in directions:
@@ -51,8 +51,8 @@ class Kita:
                             queue.append((nr, nc, steps + 1))
                             visited.add((nr, nc))
 
-        if len(valid_moves) > 1 and self.last_moves[self.turn] in valid_moves:
-                valid_moves.remove(self.last_moves[self.turn])
+        if len(valid_moves) > 1 and self.last_moves[turn] in valid_moves:
+                valid_moves.remove(self.last_moves[turn])
 
         return self.parse_move(valid_moves)
                 
@@ -64,7 +64,7 @@ class Kita:
         end_col = col_dict[move[2]]
         end_row = 4 - int(move[3])
 
-        valids = self.get_valid_moves()
+        valids = self.get_valid_moves(self.turn)
 
         if move in valids:
             self.board[end_row][end_col] = self.board[start_row][start_col]
@@ -90,10 +90,12 @@ class Kita:
         self.current_step_size = self.tile_values[r][c]
 
     def check_gameover(self):
-        if self.board[self.pieces[-1][0][0]][self.pieces[-1][0][1]] != -2 or self.board[self.pieces[1][0][0]][self.pieces[1][0][1]] != 2:
-            return True
-        
-        return len(self.get_valid_moves()) == 0
+        if self.board[self.pieces[-1][0][0]][self.pieces[-1][0][1]] != -2 or len(self.get_valid_moves(-1)) == 0:
+            return 1
+        if self.board[self.pieces[1][0][0]][self.pieces[1][0][1]] != 2 or len(self.get_valid_moves(1)) == 0:
+            return -1
+        return 0
+
     
     def print_board_state(self):
         print()
@@ -101,49 +103,3 @@ class Kita:
             print(f"{4-i}|" + " ".join(f"{'' if cell is None else cell:>3}" for cell in row))
         print("   " + "_"*27)
         print("    a   b   c   d   e   f   g")
-    """
-    move
-
-    reset
-
-    change turn
-
-    check_gameover
-
-    valid moves
-
-    ifvalid
-
-    print 
-
-
-if __name__ == "__main__":
-    board = Kita()
-    #Çoban matı testi
-    '''board.print_board_state()
-    print("Game Over:", board.check_gameover())
-    board.move("f1d1")
-    board.print_board_state()
-    print("Game Over:", board.check_gameover())
-    board.move("a3a1")
-    board.print_board_state()
-    print("Game Over:", board.check_gameover())
-    board.move("g2g4")
-    board.print_board_state()
-    print("Game Over:", board.check_gameover())
-    board.move("b4d4")
-    board.print_board_state()
-    print("Game Over:", board.check_gameover())
-    board.move("g1g3")
-    board.print_board_state()
-    print("Game Over:", board.check_gameover())'''
-
-    board.print_board_state()
-    while not board.check_gameover():
-        print()
-        board.move(input("move: "))
-        board.print_board_state()
-        print("Turn", board.turn)
-        print("Step size", board.current_step_size)
-
-    print("Game over")    """

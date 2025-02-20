@@ -25,7 +25,7 @@ class Node:
         self.children:list[Node] = []
 
     def is_terminal(self) -> bool:
-        return self.state.check_gameover()
+        return self.state.check_gameover() != 0
 
     def is_leaf(self) -> bool:
         return len(self.children) == 0
@@ -43,7 +43,7 @@ class Node:
     
     @torch.no_grad()
     def value_policy_batch(self, states: 'list[Kita]', model: 'ResNet') -> tuple[np.ndarray, np.ndarray]:
-        
+
         model.eval()
         inputs = torch.stack([f.prepare_input(state) for state in states]).to(self.args['device'])
         values, policies = model(inputs)
@@ -75,7 +75,7 @@ class Node:
         
         max_depth.add(self.depth+1)
         for i, state in enumerate(new_states):
-            if state.check_gameover():
+            if state.check_gameover() != 0:
                 values[i] = -1000
             child = Node(self.args, new_states[i], self.depth+1, self, actions[i], probs[i], policies[i])
             self.children.append(child)

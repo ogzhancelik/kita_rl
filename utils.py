@@ -91,7 +91,7 @@ def moves_to_a0(moves: list[str]) -> list[int]:
 
 
 def parallel_valid_policy(policies: np.ndarray, envs: list[Kita]) -> np.ndarray:
-    valid_moves = [list(env.get_valid_moves()) for env in envs]
+    valid_moves = [list(env.get_valid_moves(env.turn)) for env in envs]
     encoded_valid_moves = [moves_to_a0(moves) for moves in valid_moves]
     mask = np.zeros(shape=(len(envs), 672))
     for i, moves in enumerate(encoded_valid_moves):
@@ -102,7 +102,7 @@ def parallel_valid_policy(policies: np.ndarray, envs: list[Kita]) -> np.ndarray:
     return valid_policy
 
 def valid_policy(policy: np.ndarray, env: Kita) -> np.ndarray:
-    valid_moves = list(env.get_valid_moves())
+    valid_moves = list(env.get_valid_moves(env.turn))
     encoded_valid_moves = moves_to_a0(valid_moves)
     mask = np.zeros(672)
     mask[encoded_valid_moves] = 1
