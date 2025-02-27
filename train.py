@@ -66,7 +66,6 @@ class Train:
             running_loss = 0.0
             running_mse_loss = 0.0
             running_ce_loss = 0.0
-            correct = 0
             total = 1
             itr_loss = 0.0
             itr_ms_loss = 0.0
@@ -92,10 +91,6 @@ class Train:
                 running_ce_loss += loss_ce.item()
                 
 
-                _, predicted = torch.max(outputs_ce.data, 1)
-                labels_ce = torch.argmax(labels_ce, dim=1)
-                total += labels_ce.size(0)
-                correct += (predicted == labels_ce).sum().item()
 
                 if iters % self.log_step == 0:
                     loss = running_loss - itr_loss
@@ -106,13 +101,12 @@ class Train:
                     itr_ce_loss = running_ce_loss
 
 
-                    log = f'iterasyon {iters}, epoch {(epoch+1)}/{self.epochs}, Loss: {loss / step:.4f}, Learning rate: {lr}, MSE Loss: {mse_loss / step:.4f}, CE Loss: {ce_loss / step:.4f}, Accuracy: {100 * correct / total:.2f}%'
+                    log = f'iterasyon {iters}, epoch {(epoch+1)}/{self.epochs}, Loss: {loss / step:.4f}, Learning rate: {lr}, MSE Loss: {mse_loss / step:.4f}, CE Loss: {ce_loss / step:.4f}'
                     with open('log.txt', 'a') as f:
                         f.write(log + '\n')
                     writer.add_scalar('Loss', loss / step, iters)
                     writer.add_scalar('MSE Loss', mse_loss / step, iters)
                     writer.add_scalar('CE Loss', ce_loss / step, iters)
-                    writer.add_scalar('Accuracy', 100 * correct / total, iters)
                     writer.add_scalar('Learning rate', lr, iters)
                     writer.flush()
                     writer.close()
@@ -122,15 +116,13 @@ class Train:
             
 
             epoch_loss = running_loss / len(train_loader)
-            epoch_accuracy = 100 * correct / total
             epoch_mse = running_mse_loss / len(train_loader)
             epoch_ce = running_ce_loss / len(train_loader)
             train_loss_history.append(epoch_loss)
             train_mse_loss_history.append(epoch_mse)
             train_ce_loss_history.append(epoch_ce)
-            train_accuracy_history.append(epoch_accuracy)
 
-            epoch_log = f"Epoch [{epoch+1}/{self.epochs}], Loss: {epoch_loss:.4f}, Learning rate: {lr}, MSE Loss: {epoch_mse:.4f}, CE Loss: {epoch_ce:.4f}, Accuracy: {epoch_accuracy:.2f}%"
+            epoch_log = f"Epoch [{epoch+1}/{self.epochs}], Loss: {epoch_loss:.4f}, Learning rate: {lr}, MSE Loss: {epoch_mse:.4f}, CE Loss: {epoch_ce:.4f}"
             print(epoch_log)
             if train_loss_history[-1] == min(train_loss_history):
                 for file in os.listdir(checkpoint_dir):
@@ -146,7 +138,6 @@ class Train:
                 'loss': epoch_loss,
                 'mse_loss': epoch_mse,
                 'ce_loss': epoch_ce,
-                'accuracy': epoch_accuracy,
                 }, checkpoint_path)
                 print(f"Checkpoint saved at {checkpoint_path}")
                 

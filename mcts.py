@@ -79,7 +79,8 @@ class Node:
                 values[i] = -1000
             child = Node(self.args, new_states[i], self.depth+1, self, actions[i], probs[i], policies[i])
             self.children.append(child)
-            child.backpropagation(-values[i])
+            child.backpropagation(values[i])
+            #child.backpropagation(-values[i])
      
 
     def backpropagation(self, rollout_value: float) -> None:
@@ -88,7 +89,7 @@ class Node:
         self.Q += rollout_value
         node = self.parent
         while node is not None:
-            rollout_value = -rollout_value
+            rollout_value *= -1
             node.N += 1
             node.Q += rollout_value
             node = node.parent
@@ -123,7 +124,7 @@ class MCTS:
             current_node = current_node.best_child()
 
         if current_node.is_terminal():
-            value = -1000 if current_node.state.turn == 1 else 0
+            value = -1000 #if current_node.state.turn == 1 else 0
             current_node.backpropagation(value)
         else:
             current_node.expand(self.model)
@@ -143,9 +144,10 @@ class MCTS:
 
         for _ in range(self.args["num_simulation"]):
             self._simulate(root)
-        print("max_depth", max(max_depth ))
+        print("max_depth", max(max_depth))
         mcts_action_probs = np.zeros(self.args['action_space'])
         for child in root.children:
             mcts_action_probs[child.action] = child.N
         return mcts_action_probs / np.sum(mcts_action_probs)
+        #softmax
     

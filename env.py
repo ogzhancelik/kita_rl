@@ -30,7 +30,9 @@ class Kita:
         return new_moves
 
 
-    def get_valid_moves(self, turn):
+    def get_valid_moves(self, turn=0):
+        if turn == 0:
+            turn = self.turn
         valid_moves = []
         for (row, col) in self.pieces[turn]:
             directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]

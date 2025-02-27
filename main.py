@@ -35,7 +35,7 @@ class AlphaZero:
 
         winner = state.check_gameover()
         return states, probs, [winner] * len(states)  # Kazananı her tahtaya ekle
-    
+        # bura düzeltilicek kazana konuma 1 kaybeden -1 olacak 
     def load_model(self, path):
         self.model.load_state_dict(torch.load(path)["model_state_dict"])
     def save_model(self, path):
