@@ -5,6 +5,8 @@ import torch
 from env import Kita
 from model import ResNet
 import copy
+from graphviz import Digraph
+
 global max_depth 
 max_depth = set()
 
@@ -76,7 +78,7 @@ class Node:
         max_depth.add(self.depth+1)
         for i, state in enumerate(new_states):
             if state.check_gameover() != 0:
-                values[i] = -1000
+                values[i] = -1
             child = Node(self.args, new_states[i], self.depth+1, self, actions[i], probs[i], policies[i])
             self.children.append(child)
             child.backpropagation(values[i])
@@ -98,8 +100,6 @@ class MCTS:
     def __init__(self, args: 'dict', model: 'ResNet') -> None:
         self.args = args
         self.model = model.to(args['device'])
-
-
 
 
     @torch.no_grad()
@@ -124,12 +124,44 @@ class MCTS:
             current_node = current_node.best_child()
 
         if current_node.is_terminal():
-            value = -1000 #if current_node.state.turn == 1 else 0
+            value = -1 #if current_node.state.turn == 1 else 0
             current_node.backpropagation(value)
         else:
             current_node.expand(self.model)
 
 
+    def plot_tree(self, node, filename="mcts_tree"):
+        """
+        Plot the MCTS tree using Graphviz.
+
+        Parameters:
+        -----------
+        node : Node
+            The root node of the tree to be plotted.
+        filename : str
+            The name of the output file (without extension).
+        """
+        dot = Digraph(comment='MCTS Tree')
+
+        def add_node(dot, node, parent_id=None):
+            node_id = str(id(node))
+            #label = f"{node.action}\nN: {node.N}\nD: {node.depth:.2f}\nQ: {node.Q:.2f}\n"
+            #label = f"{f.a0_to_move(node.action)}\nN: {node.N}"
+            action = f.a0_to_move(node.action) if node.action else "None"
+            label = f"{action}\nN: {node.N}\nD: {node.depth}\nQ: {node.Q[0]:.2f}"
+            dot.node(node_id, label=label)
+
+            if parent_id is not None:
+                dot.edge(parent_id, node_id)
+
+            for child in node.children:
+                add_node(dot, child, node_id)
+
+        add_node(dot, node)
+
+        # Render the graph to a file
+        dot.render(filename, format='png', cleanup=True)
+        print(f"Tree saved to {filename}.png")
 
     def search(self, state: 'Kita') -> np.ndarray:
         max_depth.clear()
@@ -145,6 +177,10 @@ class MCTS:
         for _ in range(self.args["num_simulation"]):
             self._simulate(root)
         print("max_depth", max(max_depth))
+
+        if state.move_counter == 0:
+            self.plot_tree(root)
+    
         mcts_action_probs = np.zeros(self.args['action_space'])
         for child in root.children:
             mcts_action_probs[child.action] = child.N

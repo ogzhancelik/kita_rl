@@ -46,6 +46,7 @@ def play_game(args):
     A0 = AlphaZero(args)
     return A0.self_play()
 
+
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
@@ -100,6 +101,7 @@ if __name__ == "__main__":
         trainer.train(boards, evals, moves)
 
         print("Training completed. Restarting loop...")
+
 """
 import torch 
 import numpy as np
@@ -110,7 +112,7 @@ from model import ResNet
 from env import Kita
 import copy
 from train import Train
-
+from graphviz import Digraph
 
 
 class AlphaZero:
@@ -136,11 +138,9 @@ class AlphaZero:
             states.append(f.board_to_matrix(state))
             probs.append(prob)
             state.move(action)
-            print(action)
 
         print(f"Game result: {state.check_gameover()}")
         return states, probs, state.check_gameover()
-
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -191,10 +191,4 @@ if __name__ == "__main__":
         trainer.epochs = 100  # 1000 epoch boyunca eğit
         trainer.train(boards, evals, moves)
 
-        print("Training completed. Restarting loop...")
-
-
-
-
-
-"""
+        print("Training completed. Restarting loop...")"""
