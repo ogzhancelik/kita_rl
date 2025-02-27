@@ -27,14 +27,15 @@ class AlphaZero:
         states = []
         state = Kita()
 
-        while not state.check_gameover():
+        while not state.check_gameover() and state.move_counter < 256:
             action, prob = self.game_policy(state)
             states.append(f.board_to_matrix(state))
             probs.append(prob)
             state.move(action)
+            print(f"Move {state.move_counter}")
 
         winner = state.check_gameover()
-        return states, probs, [winner] * len(states)  # Kazananı her tahtaya ekle
+        return states, probs, [winner*((-1)**i) for i in range(len(states))]  # Kazananı her tahtaya ekle
         # bura düzeltilicek kazana konuma 1 kaybeden -1 olacak 
     def load_model(self, path):
         self.model.load_state_dict(torch.load(path)["model_state_dict"])

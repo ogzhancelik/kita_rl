@@ -160,8 +160,8 @@ class MCTS:
         add_node(dot, node)
 
         # Render the graph to a file
-        dot.render(filename, format='png', cleanup=True)
-        print(f"Tree saved to {filename}.png")
+        dot.render(filename, format='svg')
+        print(f"Tree saved to {filename}.svg")
 
     def search(self, state: 'Kita') -> np.ndarray:
         max_depth.clear()
