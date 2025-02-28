@@ -33,6 +33,7 @@ class Train:
 
 
     def train(self: 'Train', boards: torch.Tensor, evals: torch.Tensor, moves: torch.Tensor) -> None:
+
         writer = SummaryWriter(log_dir='./logs',flush_secs=1)
 
         for param_group in self.optimizer.param_groups:
@@ -142,7 +143,7 @@ class Train:
                 print(f"Checkpoint saved at {checkpoint_path}")
                 
             else:
-                lr *= 0.3
+                lr *= 1
                 checkpoint_path = os.path.join(checkpoint_dir, f'model_epoch_{e}.pth')
                 self.model.load_state_dict(torch.load(checkpoint_path)["model_state_dict"])
                 self.optimizer.load_state_dict(torch.load(checkpoint_path)["optimizer_state_dict"])
