@@ -93,7 +93,6 @@ class Kita:
 
     def check_gameover(self):
         if self.board[self.pieces[-1][0][0]][self.pieces[-1][0][1]] != -2 or len(self.get_valid_moves(-1)) == 0:
-            print(self.get_valid_moves(-1))
             return 1
         if self.board[self.pieces[1][0][0]][self.pieces[1][0][1]] != 2 or len(self.get_valid_moves(1)) == 0:
             return -1
