@@ -18,7 +18,7 @@ class Kita:
 
         self.turn = 1
         self.pieces = {-1:[(0,0), (0,1), (1,0)], 1:[(3,6), (3,5), (2,6)]  }
-        self.current_step_size = 2
+        self.current_step_size = {-1:2, 1:2}
         self.last_moves = {1: [(0,0), (0,0)], -1: [(0,0), (0,0)]}
         self.move_counter = 0
         self.forced_move = True
@@ -41,7 +41,7 @@ class Kita:
             
             while queue:
                 r, c, steps = queue.popleft()
-                if steps == self.current_step_size:
+                if steps == self.current_step_size[turn]:
                     if self.board[r][c] in [0, -2, 2]:
                         if self.board[r][c]*turn <= 0:
                             valid_moves.append([(row, col), (r, c)])
@@ -49,7 +49,7 @@ class Kita:
                 for dr, dc in directions:
                     nr, nc = r + dr, c + dc
                     if 0 <= nr < 4 and 0 <= nc < 7 and self.board[nr][nc] is not None and (nr, nc) not in visited:
-                        if self.board[nr][nc] not in [-1, 1] and not (self.board[nr][nc] in [-2, 2] and steps + 1 < self.current_step_size):
+                        if self.board[nr][nc] not in [-1, 1] and not (self.board[nr][nc] in [-2, 2] and steps + 1 < self.current_step_size[turn]):
                             queue.append((nr, nc, steps + 1))
                             visited.add((nr, nc))
 
@@ -89,10 +89,11 @@ class Kita:
     def change_turn(self):
         (r, c) = self.pieces[self.turn][0]
         self.turn *= -1
-        self.current_step_size = self.tile_values[r][c]
+        self.current_step_size[self.turn] = self.tile_values[r][c]
 
     def check_gameover(self):
         if self.board[self.pieces[-1][0][0]][self.pieces[-1][0][1]] != -2 or len(self.get_valid_moves(-1)) == 0:
+            print(self.get_valid_moves(-1))
             return 1
         if self.board[self.pieces[1][0][0]][self.pieces[1][0][1]] != 2 or len(self.get_valid_moves(1)) == 0:
             return -1
