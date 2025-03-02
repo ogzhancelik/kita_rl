@@ -25,18 +25,27 @@ class AlphaZero:
         """Tek bir oyunu oynayıp veriyi döndür."""
         probs = []
         states = []
+        actions = []
         state = Kita()
-
+        
         while not state.check_gameover() and state.move_counter < 256:
             action, prob = self.game_policy(state)
+            actions.append(action)
             states.append(f.board_to_matrix(state))
             probs.append(prob)
             state.move(action)
-            print(f"Move {state.move_counter}")
+            print(f"Move {state.move_counter}, {action}")
+
+        if state.move_counter<256:
+            states.append(f.board_to_matrix(state))
+            probs.append(np.zeros((672)))
+
+        with open("games.txt", "a") as file:  # Open file in append mode
+            file.write(f"{actions}\n")
 
         winner = state.check_gameover()
         return states, probs, [winner*((-1)**i) for i in range(len(states))]  # Kazananı her tahtaya ekle
-        # bura düzeltilicek kazana konuma 1 kaybeden -1 olacak 
+
     def load_model(self, path):
         self.model.load_state_dict(torch.load(path)["model_state_dict"])
     def save_model(self, path):
@@ -53,7 +62,7 @@ if __name__ == "__main__":
     print(f"Using device: {device}")
 
     args = {
-        "num_simulation": 400,
+        "num_simulation": 50,
         "truncation": 50,
         "c_base": 19652,
         "c_init": 1.25,
@@ -66,18 +75,20 @@ if __name__ == "__main__":
         "t": 1,
         "model_checkpoint_path": "model_epoch_1.pth",
     }
-
+    
     trainer = Train()
     
+    game_n = 0
     while True:
+        num_games = 1
+        game_n+=num_games
+        print(f"Game {game_n}")
         all_boards = []
         all_moves = []
         all_evals = []
 
         print("Starting parallel self-play...")
 
-        # Paralel oyun oynatma (CPU çekirdeklerini kullanır)
-        num_games = 1
         with mp.Pool(processes=mp.cpu_count()) as pool:
             results = pool.map(play_game, [args] * num_games)
 

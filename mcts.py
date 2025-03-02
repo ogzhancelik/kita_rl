@@ -81,8 +81,8 @@ class Node:
                 values[i] = -1
             child = Node(self.args, new_states[i], self.depth+1, self, actions[i], probs[i], policies[i])
             self.children.append(child)
-            child.backpropagation(values[i])
-            #child.backpropagation(-values[i])
+            #child.backpropagation(values[i])
+            child.backpropagation(-values[i])
      
 
     def backpropagation(self, rollout_value: float) -> None:
@@ -124,7 +124,7 @@ class MCTS:
             current_node = current_node.best_child()
 
         if current_node.is_terminal():
-            value = -1 #if current_node.state.turn == 1 else 0
+            value = 1 #if current_node.state.turn == 1 else 0
             current_node.backpropagation(value)
         else:
             current_node.expand(self.model)
@@ -149,7 +149,13 @@ class MCTS:
             #label = f"{f.a0_to_move(node.action)}\nN: {node.N}"
             action = f.a0_to_move(node.action) if node.action else "None"
             label = f"{action}\nN: {node.N}\nD: {node.depth}\nQ: {node.Q[0]:.2f}"
-            dot.node(node_id, label=label)
+            fillcolor = "white"
+            if node.is_terminal():
+                if node.depth%2 == 0:
+                    fillcolor = "lightcoral"
+                else:
+                    fillcolor = "darkolivegreen2"
+            dot.node(node_id, label=label, style="filled", fillcolor=fillcolor)
 
             if parent_id is not None:
                 dot.edge(parent_id, node_id)
@@ -179,11 +185,10 @@ class MCTS:
         print("max_depth", max(max_depth))
 
         if state.move_counter == 0:
-            self.plot_tree(root)
+            self.plot_tree(root, filename=f"mcts_tree")
     
         mcts_action_probs = np.zeros(self.args['action_space'])
         for child in root.children:
             mcts_action_probs[child.action] = child.N
         return mcts_action_probs / np.sum(mcts_action_probs)
         #softmax
-    
