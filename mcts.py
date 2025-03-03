@@ -103,7 +103,7 @@ class MCTS:
 
 
     @torch.no_grad()
-    def value_policy(self, state: 'Kita') -> tuple[float, np.ndarray]:
+    def value_policy(self, state: 'Kita', validate: 'bool|None'=True) -> tuple[float, np.ndarray]:
        
         self.model.eval()
         value , policy = self.model(f.prepare_input(state).unsqueeze(0).to(self.args['device']))
@@ -112,7 +112,8 @@ class MCTS:
         #value = value.cpu().item()
         policy = torch.softmax(policy.squeeze(0), dim=0).cpu().numpy()
        
-        valid_policy = f.valid_policy(policy, state)
+        if validate:
+            valid_policy = f.valid_policy(policy, state)
         return value, valid_policy
 
 
@@ -172,10 +173,12 @@ class MCTS:
     def search(self, state: 'Kita') -> np.ndarray:
         max_depth.clear()
         root_state = copy.deepcopy(state)
-        value, policy = self.value_policy(root_state)
+        value, policy = self.value_policy(root_state,validate=False)
      
+        
         policy = (1 - self.args['dirichlet_epsilon']) * policy + self.args['dirichlet_epsilon'] * np.random.dirichlet(
             [self.args['dirichlet_alpha']] * self.args['action_space'])
+        
         policy = f.valid_policy(policy, root_state)
         root = Node(self.args, root_state)
         root.policy = policy
