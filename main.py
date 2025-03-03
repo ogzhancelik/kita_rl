@@ -17,6 +17,10 @@ class AlphaZero:
     def game_policy(self, state: Kita) -> tuple[str, np.ndarray]:
         """MCTS ile en iyi hamleyi bul."""
         mcts_action_probs = self.mcts.search(state)
+        
+        if state.move_counter < 6:
+            action = np.random.choice(len(mcts_action_probs), p=mcts_action_probs)
+            return f.a0_to_move(int(action)), mcts_action_probs
         action = np.argmax(mcts_action_probs)
         return f.a0_to_move(int(action)), mcts_action_probs
 
@@ -67,7 +71,7 @@ if __name__ == "__main__":
         "c_base": 19652,
         "c_init": 1.25,
         "dirichlet_epsilon": 0.25,
-        "dirichlet_alpha": 0.03,
+        "dirichlet_alpha": 2.5,
         "memory_size": 1000,
         "action_space": 672,
         "device": device,
