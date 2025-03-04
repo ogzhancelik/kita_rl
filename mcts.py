@@ -193,5 +193,5 @@ class MCTS:
         mcts_action_probs = np.zeros(self.args['action_space'])
         for child in root.children:
             mcts_action_probs[child.action] = child.N
-        return mcts_action_probs / np.sum(mcts_action_probs)
+        return mcts_action_probs / np.sum(mcts_action_probs), max(max_depth)
         #softmax

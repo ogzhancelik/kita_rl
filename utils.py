@@ -117,6 +117,19 @@ def prepare_input(env: Kita) -> torch.Tensor:
     return X_tensor
 
 
+import torch
+import torch.nn.functional as F
+
+def kl_divergence(p, q):
+    return torch.sum(p * (torch.log(p) - torch.log(q)))
+
+
+
+def js_divergence(p, q):
+    m = 0.5 * (p + q)
+    return 0.5 * kl_divergence(p, m) + 0.5 * kl_divergence(q, m)
+
+
 
 
 
