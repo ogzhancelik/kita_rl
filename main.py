@@ -20,7 +20,7 @@ class AlphaZero:
         
         if state.move_counter < 6:
             action = np.random.choice(len(mcts_action_probs), p=mcts_action_probs)
-            return f.a0_to_move(int(action)), mcts_action_probs
+            return f.a0_to_move(int(action)), mcts_action_probs, depth
         action = np.argmax(mcts_action_probs)
         return f.a0_to_move(int(action)), mcts_action_probs, depth
 
@@ -30,14 +30,14 @@ class AlphaZero:
         probs = []
         states = []
         actions = []
-        fm_intereset = []
+        fm_interest = []
         depth_hist = []
         var_hist = []
         state = Kita()
         
         while not state.check_gameover() and state.move_counter < 256:
             action, prob, depth = self.game_policy(state)
-            fm_intereset.append(max(prob))
+            fm_interest.append(max(prob))
             depth_hist.append(depth)
             var_hist.append(np.var(prob))
             actions.append(action)
@@ -142,6 +142,8 @@ if __name__ == "__main__":
         "top_actions": 5,
         "t": 1,
         "model_checkpoint_path": "model_epoch_1.pth",
+        "num_games": 1,
+        "epoch": 1000
     }
 
     A0 = AlphaZero(args)

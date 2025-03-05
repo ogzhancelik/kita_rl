@@ -114,6 +114,8 @@ class MCTS:
        
         if validate:
             valid_policy = f.valid_policy(policy, state)
+        else:
+            valid_policy = policy
         return value, valid_policy
 
 
@@ -187,8 +189,8 @@ class MCTS:
             self._simulate(root)
         print("max_depth", max(max_depth))
 
-        if state.move_counter == 0:
-            self.plot_tree(root, filename=f"mcts_tree")
+        #if state.move_counter == 0:
+        #    self.plot_tree(root, filename=f"mcts_tree")
     
         mcts_action_probs = np.zeros(self.args['action_space'])
         for child in root.children:
