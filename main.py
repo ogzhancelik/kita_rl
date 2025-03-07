@@ -49,7 +49,7 @@ class AlphaZero:
             probs.append(np.zeros((672)))
 
         winner = state.check_gameover()
-        win_list  = [0] + [winner * (-1)**i for i in range(1, len(states))]
+        win_list  = [winner * (-1)**i for i in range(len(states))]
         return states, probs, win_list, fm_interest, sum(depth_hist) / len(depth_hist), state.move_counter, winner, var_hist, sum(num_valid_moves)/len(num_valid_moves)
 
     def load_model(self, path):
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         "model_checkpoint_path": "model_epoch_1.pth",
         "num_games": 8,  # Paralel olarak çalıştırılacak oyun sayısı
         "games_per_training": 1,  # Kaç oyun oynandıktan sonra eğitime geçileceği
-        "max_cycles": 1000,  # Kaç defa 1000 oyun + eğitim döngüsü yapılacağı
+        "max_cycles": 1,  # Kaç defa 1000 oyun + eğitim döngüsü yapılacağı
         # Her eğitimde kaç epoch çalıştırılacağı
     }
 

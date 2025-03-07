@@ -60,7 +60,7 @@ class Train:
 
                 with torch.amp.autocast(device_type='cuda'):
                     outputs_mse, outputs_ce = self.model(data)
-                    loss_mse = criterion_mse(outputs_mse, labels_mse)
+                    loss_mse = criterion_mse(outputs_mse, labels_mse.view(-1, 1))
                     loss_ce = criterion_ce(outputs_ce, labels_ce)
                     loss = loss_mse + loss_ce
 
