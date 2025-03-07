@@ -13,16 +13,23 @@ def board_to_matrix(env: Kita) -> np.ndarray:
     matrix[3, *env.pieces[-env.turn][1]] = 1
     matrix[3, *env.pieces[-env.turn][2]] = 1
 
-    matrix[4, :, :] = (env.turn + 1)//2
-    matrix[5, :, :] = float(env.move_counter)/100
+    
     
     if env.move_counter > 1:
-        matrix[6, *env.last_moves[env.turn][0]] = 1
-        matrix[6, *env.last_moves[env.turn][1]] = 1
+        matrix[4, *env.last_moves[env.turn][0]] = 1
+        matrix[4, *env.last_moves[env.turn][1]] = 1
     
     if env.move_counter > 0:
-        matrix[7, *env.last_moves[-env.turn][0]] = 1
-        matrix[7, *env.last_moves[-env.turn][1]] = 1
+        matrix[5, *env.last_moves[-env.turn][0]] = 1
+        matrix[5, *env.last_moves[-env.turn][1]] = 1
+
+    if env.turn == -1:
+        matrix = np.flip(matrix, axis=(1, 2)).copy()
+
+
+
+    matrix[6, :, :] = (env.turn + 1)//2
+    matrix[7, :, :] = float(env.move_counter)/100
 
     matrix[8] = env.tile_values
 
@@ -109,6 +116,7 @@ def valid_policy(policy: np.ndarray, env: Kita) -> np.ndarray:
     valid_policy = mask * policy
     valid_policy /= (np.sum(valid_policy) if np.sum(valid_policy) != 0 else 1)
     return valid_policy
+
 
 
 def prepare_input(env: Kita) -> torch.Tensor:

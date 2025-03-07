@@ -58,7 +58,9 @@ class Kita:
 
         return self.parse_move(valid_moves)
                 
-
+    def num_valid_moves(self):
+        return len(self.get_valid_moves())
+    
     def move(self, move):
         col_dict = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6}
         start_col = col_dict[move[0]]

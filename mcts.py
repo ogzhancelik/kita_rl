@@ -187,7 +187,7 @@ class MCTS:
 
         for _ in range(self.args["num_simulation"]):
             self._simulate(root)
-        print("max_depth", max(max_depth))
+        # print("max_depth", max(max_depth))
 
         #if state.move_counter == 0:
         #    self.plot_tree(root, filename=f"mcts_tree")
