@@ -9,6 +9,7 @@ from dataset import ChessDataset
 from torch.utils.data import DataLoader
 from tqdm import tqdm # type: ignore
 import json
+import time
 
 
 with open(r'D:\Emin\PythonProjects\ozi\kita_rl\train_config.json') as file:
@@ -72,33 +73,28 @@ class Train:
                 epoch_mse += loss_mse.item()
                 epoch_ce += loss_ce.item()
 
-                # Log kaydı epoch içinde `step` kadar eşit aralıklarla alınsın
-                if batch_idx % log_intervals == 0:
-                    loss_history.append(loss.item())
-                    mse_loss_history.append(loss_mse.item())
-                    ce_loss_history.append(loss_ce.item())
-                    print(f"Epoch {epoch+1}/{self.epochs} - Batch {batch_idx+1}/{total_iters} - Loss: {loss.item():.4f} - MSE Loss: {loss_mse.item():.4f} - CE Loss: {loss_ce.item():.4f}")
+                # # Log kaydı epoch içinde `step` kadar eşit aralıklarla alınsın
+                # if batch_idx % log_intervals == 0:
+                #     loss_history.append(loss.item())
+                #     mse_loss_history.append(loss_mse.item())
+                #     ce_loss_history.append(loss_ce.item())
+                #     print(f"Epoch {epoch+1}/{self.epochs} - Batch {batch_idx+1}/{total_iters} - Loss: {loss.item():.4f} - MSE Loss: {loss_mse.item():.4f} - CE Loss: {loss_ce.item():.4f}")
 
-
+            print(f"Epoch {epoch+1}/{self.epochs} - Loss: {epoch_loss/total_iters:.4f} - MSE Loss: {epoch_mse/total_iters:.4f} - CE Loss: {epoch_ce/total_iters:.4f}")
+            # write loss to csv
+            with open('loss.csv', 'a') as f:
+                f.write(f"{epoch+1},{epoch_loss/total_iters},{epoch_mse/total_iters},{epoch_ce/total_iters}\n")
             
-            checkpoint_path = os.path.join(checkpoint_dir, f'model_epoch_{epoch+1}.pth')
-            torch.save({
-                'epoch': epoch + 1,
-                'loss': epoch_loss,
-                'mse_loss': epoch_mse,
-                'ce_loss': epoch_ce,
-            }, checkpoint_path)
-            print(f"Checkpoint saved at {checkpoint_path}")
 
         # Eğitim istatistiklerini kaydet
-        analytics_path = os.path.join(checkpoint_dir, 'training_analytics.pth')
-        torch.save({
-            'train_loss_history': loss_history,
-            'mse_loss_history': mse_loss_history,
-            'ce_loss_history': ce_loss_history,
-        }, analytics_path)
-        print(f"Training analytics saved at {analytics_path}")
-        print("Training finished!")
+        # analytics_path = os.path.join(checkpoint_dir, 'training_analytics.pth')
+        # torch.save({
+        #     'train_loss_history': loss_history,
+        #     'mse_loss_history': mse_loss_history,
+        #     'ce_loss_history': ce_loss_history,
+        # }, analytics_path)
+        # print(f"Training analytics saved at {analytics_path}")
+        # print("Training finished!")
 
 
     def predict(self, board, move_counter):

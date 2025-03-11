@@ -1,6 +1,8 @@
 import torch
 import numpy as np
 from env import Kita
+import os
+import csv
 
 def board_to_matrix(env: Kita) -> np.ndarray:
     matrix = np.zeros((10, 4, 7), dtype=np.float32)
@@ -124,6 +126,11 @@ def prepare_input(env: Kita) -> torch.Tensor:
     X_tensor = torch.tensor(matrix, dtype=torch.float32)
     return X_tensor
 
+def mirror_move(move: str) -> str:
+    return chr(200- ord(move[0])) + str(5-int(move[1])) + chr(200 - ord(move[2])) + str(5-int(move[3]))
+
+def mirror_moves(moves: list[str]) -> list[str]:
+    return [mirror_move(move) for move in moves]
 
 import torch
 import torch.nn.functional as F
@@ -143,3 +150,23 @@ def js_divergence(p, q):
 
 
 
+def append_to_csv(file, data, header):
+        """Veriyi belirtilen CSV dosyasına ekler (append modunda)."""
+        dir = "stats"
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        
+        file = os.path.join(dir, file)
+        file_exists = os.path.exists(file)
+        with open(file, "a", newline="") as f:
+            writer = csv.writer(f)
+
+            # Eğer dosya yoksa başlık ekle
+            if not file_exists:
+                writer.writerow([header])
+
+            # Yeni verileri satır satır ekle
+            for value in data:
+                writer.writerow([value])
+
+        print(f"Appended to {file}")

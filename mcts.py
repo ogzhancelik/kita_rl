@@ -175,7 +175,7 @@ class MCTS:
     def search(self, state: 'Kita') -> np.ndarray:
         max_depth.clear()
         root_state = copy.deepcopy(state)
-        value, policy = self.value_policy(root_state,validate=False)
+        value, policy = self.value_policy(root_state, False)
      
         
         policy = (1 - self.args['dirichlet_epsilon']) * policy + self.args['dirichlet_epsilon'] * np.random.dirichlet(
