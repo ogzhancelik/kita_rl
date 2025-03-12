@@ -12,7 +12,7 @@ import json
 import time
 
 
-with open(r'D:\Emin\PythonProjects\ozi\kita_rl\train_config.json') as file:
+with open(r'./train_config.json') as file:
     args = json.load(file)
 
 

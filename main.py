@@ -31,7 +31,7 @@ class AlphaZero:
 
     def play_vs(self, model_path):
 
-        self.load_model_inference(model_path)
+        self.load_model(model_path)
         state = Kita()
 
         while not state.check_gameover():
@@ -73,6 +73,8 @@ class AlphaZero:
         win_list  = [winner * (-1)**i for i in range(len(states))]
         return states, probs, win_list, fm_interest, sum(depth_hist) / len(depth_hist), state.move_counter, winner, var_hist, sum(num_valid_moves)/len(num_valid_moves)
 
+    def load_model(self, path):
+        self.model.load_state_dict(torch.load(path))
 
     def load_model_inference(self, path):
         checkpoint = torch.load(path, map_location=self.device)
@@ -116,8 +118,6 @@ def save_statistics_csv(fm_interest, depth_hist, game_len, win, var_hist, num_va
     f.append_to_csv("num_valid_moves.csv", num_valid_moves, "num_valid_moves")
 
 
-
-
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
@@ -137,11 +137,10 @@ if __name__ == "__main__":
         "num_games": 8,  # Paralel olarak çalıştırılacak oyun sayısı
         "games_per_training": 128,  # Kaç oyun oynandıktan sonra eğitime geçileceği
         "max_cycles": 10,  
-        # Her eğitimde kaç epoch çalıştırılacağı
     }
 
     A0 = AlphaZero(args)
-    A0.play_vs(r"D:\Emin\PythonProjects\ozi\kita_rl\model_checkpoint_cycle_2.pth")
+    A0.play_vs(r"./model_checkpoint_cycle_20.pth")
 
     # trainer = Train()
 

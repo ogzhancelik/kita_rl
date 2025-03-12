@@ -175,7 +175,7 @@ class MCTS:
     def search(self, state: 'Kita') -> np.ndarray:
         max_depth.clear()
         root_state = copy.deepcopy(state)
-        value, policy = self.value_policy(root_state, False)
+        value, policy = self.value_policy(root_state,validate=False)
      
         
         policy = (1 - self.args['dirichlet_epsilon']) * policy + self.args['dirichlet_epsilon'] * np.random.dirichlet(
@@ -189,11 +189,10 @@ class MCTS:
             self._simulate(root)
         # print("max_depth", max(max_depth))
 
-        #if state.move_counter == 0:
-        #    self.plot_tree(root, filename=f"mcts_tree")
+        #self.plot_tree(root, filename=f"mcts_tree")
     
         mcts_action_probs = np.zeros(self.args['action_space'])
         for child in root.children:
             mcts_action_probs[child.action] = child.N
-        return mcts_action_probs / np.sum(mcts_action_probs), max(max_depth)
+        return mcts_action_probs / np.sum(mcts_action_probs), max(max_depth) if max_depth else 0
         #softmax

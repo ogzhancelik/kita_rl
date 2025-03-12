@@ -62,6 +62,8 @@ class Kita:
         return len(self.get_valid_moves())
     
     def move(self, move):
+        if len(move) > 4:
+            return False
         col_dict = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6}
         start_col = col_dict[move[0]]
         start_row = 4 - int(move[1])
