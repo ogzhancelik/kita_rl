@@ -15,8 +15,9 @@ class BoardGame(QGraphicsView):
         
         # Set up the scene
         self.scene = QGraphicsScene()
-        self.scene.setBackgroundBrush(QColor(25, 20, 20))
+        self.scene.setBackgroundBrush(QColor(15, 12, 12))
         self.setScene(self.scene)
+        self.setMinimumSize(700, 400)
         self.showMaximized()
 
         self.setResizeAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
@@ -68,7 +69,7 @@ class BoardGame(QGraphicsView):
                 "num_simulation": 1600,
                 "c_base": 19652,
                 "c_init": 1.25,
-                "dirichlet_epsilon": 0,
+                "dirichlet_epsilon": 0.25,
                 "dirichlet_alpha": 3.0,
                 "action_space": 672,
                 "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
@@ -149,10 +150,10 @@ class BoardGame(QGraphicsView):
             for c in range(7):
                 self.recolor_button((r,c), (0,0,0,0))
 
-        self.recolor_button(self.last_move_highlight[0], (135, 140, 85, 180))
-        self.recolor_button(self.last_move_highlight[1], (135, 140, 85, 180))
-        self.recolor_button(self.last_move_highlight[2], (170, 180, 85, 180))
-        self.recolor_button(self.last_move_highlight[3], (170, 180, 85, 180))
+        self.recolor_button(self.last_move_highlight[2], (178, 16, 70, 35))
+        self.recolor_button(self.last_move_highlight[3], (178, 16, 70, 35))
+        self.recolor_button(self.last_move_highlight[0], (16, 178, 127, 35))
+        self.recolor_button(self.last_move_highlight[1], (16, 178, 127, 35))
 
     def restart_game(self):
         # Close the current window
@@ -203,7 +204,7 @@ class BoardGame(QGraphicsView):
         self.check_gameover()
 
     def ai_move(self):
-        action, _, _ = self.A0.game_policy(self.board, random=False)
+        action, _, _ = self.A0.game_policy(self.board, random=True)
         self.make_move(action)
         #QTimer.singleShot(0, self.ai_move)
 
@@ -218,11 +219,13 @@ class BoardGame(QGraphicsView):
                 self.selected_piece = None
                 return
             self.selected_piece = pos
-            self.recolor_button(pos, (60,100,55,180))
+            
+            col = (236, 19, 88, 70) if self.board.turn == 1 else (19, 236, 168, 70)
+            self.recolor_button(pos, col)
 
             for move in self.valid_moves:
                 if move.startswith(tile):
-                    self.recolor_button(self.tile_to_pos(move[2:]), (60,100,55,180))
+                    self.recolor_button(self.tile_to_pos(move[2:]), col)
         elif self.selected_piece is not None:
             move = self.pos_to_tile(self.selected_piece)+tile
             if move in self.valid_moves:
@@ -247,8 +250,8 @@ class BoardGame(QGraphicsView):
 if __name__ == "__main__":
     board = Kita()
     app = QApplication(sys.argv)
-    ai_path = r'model_checkpoint_cycle_20.pth'
-    # game = BoardGame(board)
-    game = BoardGame(board, ai_path)
+    ai_path = r'.models/model_checkpoint_cycle_20.pth'
+    game = BoardGame(board)
+    # game = BoardGame(board, ai_path)
     game.show()
     sys.exit(app.exec())
