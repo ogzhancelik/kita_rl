@@ -140,7 +140,7 @@ if __name__ == "__main__":
     }
 
     A0 = AlphaZero(args)
-    A0.play_vs(r"./model_checkpoint_cycle_20.pth")
+    A0.play_vs(r"./models/checkpoint_cycle_20.pth")
 
     # trainer = Train()
 
